@@ -1,0 +1,17 @@
+{
+  "name": "fullstack-prototype",
+  "version": "1.0.0",
+  "description": "Full-stack app with webpages and server",
+  "main": "webpages/server.js",
+  "scripts": {
+    "start": "node webpages/server.js",
+    "server": "node webpages/server.js",
+    "dev": "node webpages/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

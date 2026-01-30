@@ -1,10 +1,412 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="../images/traffic-cone.ico">
+    <title>Full-Stack App</title>
+</head>
+<body>
+   <header class="navbar">    
+    <div class="container-fluid">
+        <a class="brand" href="#">FULL-STACK APP</a>
 
-     <html>
+        <!-- Main horizontal navigation -->
+        <ul class="navigate-nav main-nav">
+         <li class="nav-item"><a href="#">ACCOUNTS</a></li>
+         <li class="nav-item"><a href="#">EMPLOYEES</a></li>
+         <li class="nav-item"><a href="#">DEPARTMENTS</a></li>
+         <li class="nav-item"><a href="#">REQUESTS</a></li>
+        </ul>
 
-     <head><title>Test Page</title></head>
+        <!-- Auth links stacked vertically -->
+        <ul class="navigate-nav auth-links">
+         <li class="nav-item"><a href="#" id="login-link">LOGIN</a></li>
+         <li class="nav-item"><a href="#" id="register-link">REGISTER</a></li>
+        </ul>
 
-     <body><h1>Hello!</h1>
-     <p>Edited on GitHub!</p></body>
+        <!-- User dropdown (shown when logged in) -->
+        <div class="user-dropdown-container">
+            <button class="user-dropdown-btn" id="user-dropdown-btn">
+                <span id="user-display-name">Admin</span>
+                <span class="dropdown-arrow">▼</span>
+            </button>
+            <ul class="user-dropdown-menu hidden" id="user-dropdown-menu">
+                <li><a href="#" data-page="profile">Profile</a></li>
+                <li class="role-admin"><a href="#" data-page="employees">Employees</a></li>
+                <li class="role-admin"><a href="#" data-page="accounts">Accounts</a></li>
+                <li class="role-admin"><a href="#" data-page="departments">Departments</a></li>
+                <li><a href="#" data-page="requests">My Requests</a></li>
+                <li><a href="#" id="logout-link" class="logout-link">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+    </header>
 
-     </html>
+    <!-- Main content (shown when not logged in) -->
+    <main class="main-content" id="welcome-content">
+        <h1>Welcome to Full-Stack App</h1>
+        <p class="description">A static prototype before backend integration. Simulates:</p>
+        <ul class="features-list">
+            <li>Email registration + fake verification</li>
+            <li>Login with JWT-like token simulation</li>
+            <li>Role-based UI (Admin/User)</li>
+            <li>CRUD for Employees, Departments, Requests</li>
+        </ul>
+        <div class="note-box">
+            <span class="note-icon">⚠</span>
+            <span>Note: All data is no longer stored in <span class="localStorage-text">localStorage</span>. Refresh to reset.</span>
+        </div>
+        <button id="get-started-btn" class="get-started-btn">
+            Get Started <span class="arrow">→</span>
+        </button>
+    </main>
+
+    <!-- Profile content (shown when logged in) -->
+    <main class="main-content logged-in-content hidden" id="profile-content">
+        <h1>My Profile</h1>
+        <div class="profile-card">
+            <div class="profile-info">
+                <h2 id="profile-name">Admin User</h2>
+                <p><strong>Email:</strong> <span id="profile-email">admin@admin.com</span></p>
+                <p><strong>Role:</strong> <span id="profile-role">Admin</span></p>
+            </div>
+            <button class="edit-profile-btn" id="edit-profile-btn">Edit Profile</button>
+        </div>
+    </main>
+
+    <!-- Employees content (shown when logged in) -->
+    <main class="main-content logged-in-content hidden" id="employees-content">
+        <div class="page-header">
+            <h1>Employees</h1>
+            <button class="add-employee-btn" id="add-employee-btn">+ Add Employee</button>
+        </div>
+        
+        <div class="employees-table-container">
+            <table class="employees-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Dept</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="employees-table-body">
+                    <tr class="empty-row">
+                        <td colspan="5">No employees.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="employee-form-container">
+            <h2>Add/Edit Employee</h2>
+            <form id="employee-form" class="employee-form">
+                <div class="form-row">
+                    <input type="text" id="employee-id" name="employeeId" placeholder=" " required>
+                    <label for="employee-id">Employee ID</label>
+                </div>
+                <div class="form-row">
+                    <input type="email" id="employee-email" name="userEmail" placeholder=" " required>
+                    <label for="employee-email">User Email</label>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="employee-position" name="position" placeholder=" " required>
+                    <label for="employee-position">Position</label>
+                </div>
+                <div class="form-row">
+                    <select id="employee-department" name="department" required>
+                        <option value="" disabled selected hidden></option>
+                    </select>
+                    <label for="employee-department">Department</label>
+                </div>
+                <div class="form-row">
+                    <label for="employee-hire-date" class="date-label">Hire Date</label>
+                    <input type="date" id="employee-hire-date" name="hireDate" required>
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="save-btn">Save</button>
+                    <button type="button" class="cancel-btn" id="cancel-employee-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Departments content (shown when logged in) -->
+    <main class="main-content logged-in-content hidden" id="departments-content">
+        <div class="page-header">
+            <h1>Departments</h1>
+            <button class="add-employee-btn" id="add-department-btn">+ Add Department</button>
+        </div>
+        
+        <div class="employees-table-container">
+            <table class="employees-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="departments-table-body">
+                    <tr class="empty-row">
+                        <td colspan="3">No departments.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="employee-form-container" id="department-form-container">
+            <h2>Add/Edit Department</h2>
+            <form id="department-form" class="employee-form">
+                <div class="form-row">
+                    <input type="text" id="department-name" name="name" placeholder=" " required>
+                    <label for="department-name">Name</label>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="department-description" name="description" placeholder=" " required>
+                    <label for="department-description">Description</label>
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="save-btn">Save</button>
+                    <button type="button" class="cancel-btn" id="cancel-department-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Accounts content (shown when logged in, admin only) -->
+    <main class="main-content logged-in-content hidden" id="accounts-content">
+        <div class="page-header">
+            <h1>Accounts</h1>
+            <button class="add-employee-btn" id="add-account-btn">+ Add Account</button>
+        </div>
+        
+        <div class="employees-table-container">
+            <table class="employees-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Verified</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="accounts-table-body">
+                    <tr class="empty-row">
+                        <td colspan="5">No accounts.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="employee-form-container" id="account-form-container">
+            <h2>Add/Edit Account</h2>
+            <form id="account-form" class="employee-form">
+                <div class="form-row">
+                    <input type="text" id="account-firstname" name="firstname" placeholder=" " required>
+                    <label for="account-firstname">First Name</label>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="account-lastname" name="lastname" placeholder=" " required>
+                    <label for="account-lastname">Last Name</label>
+                </div>
+                <div class="form-row">
+                    <input type="email" id="account-email" name="email" placeholder=" " required>
+                    <label for="account-email">Email</label>
+                </div>
+                <div class="form-row">
+                    <input type="password" id="account-password" name="password" placeholder=" " required minlength="6">
+                    <label for="account-password">Password (min 6 chars)</label>
+                </div>
+                <div class="form-row">
+                    <select id="account-role" name="role" required>
+                        <option value="" disabled selected hidden></option>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <label for="account-role">Role</label>
+                </div>
+                <div class="form-row">
+                    <label style="display: flex; align-items: center; gap: 8px; position: static; margin-bottom: 0; cursor: pointer;">
+                        <input type="checkbox" id="account-verified" name="verified" style="width: auto;">
+                        <span>Verified</span>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="save-btn">Save</button>
+                    <button type="button" class="cancel-btn" id="cancel-account-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Requests content (shown when logged in) -->
+    <main class="main-content logged-in-content hidden" id="requests-content">
+        <div class="page-header">
+            <h1>My Requests</h1>
+            <button class="add-employee-btn" id="add-request-btn">+ New Request</button>
+        </div>
+        
+        <div class="employees-table-container">
+            <table class="employees-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Items</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="requests-table-body">
+                    <tr class="empty-row">
+                        <td colspan="5">No requests.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="employee-form-container" id="request-form-container">
+            <h2>New Request</h2>
+            <form id="request-form" class="employee-form">
+                <div class="form-row">
+                    <select id="request-type" name="type" required>
+                        <option value="" disabled selected hidden></option>
+                        <option value="Equipment">Equipment</option>
+                        <option value="Leave">Leave</option>
+                        <option value="Resources">Resources</option>
+                    </select>
+                    <label for="request-type">Type</label>
+                </div>
+                <div id="request-items-container">
+                    <div class="request-item-row">
+                        <input type="text" class="item-name" placeholder="Item name" required>
+                        <input type="number" class="item-qty" placeholder="Qty" min="1" required>
+                        <button type="button" class="remove-item-btn">×</button>
+                    </div>
+                </div>
+                <button type="button" class="secondary-btn" id="add-item-btn" style="margin-bottom: 20px;">+ Add Item</button>
+                <div class="form-row">
+                    <button type="submit" class="save-btn">Submit Request</button>
+                    <button type="button" class="cancel-btn" id="cancel-request-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Backdrop for modals -->
+    <div id="modal-backdrop" class="backdrop hidden"></div>
+
+    <!-- Register form (hidden by default) -->
+    <div id="register-form" class="register-form hidden" aria-hidden="true">
+        <form id="registerForm" class="form-card">
+            <button type="button" class="close-btn" id="close-register">✕</button>
+            <h2>REGISTRATION FORM</h2>
+            <div class="form-row">
+                <input id="firstname" name="firstname" type="text" placeholder=" " required>
+                <label for="firstname">First name</label>
+            </div>
+            <div class="form-row">
+                <input id="lastname" name="lastname" type="text" placeholder=" " required>
+                <label for="lastname">Last name</label>
+            </div>
+            <div class="form-row">
+                <input id="email" name="email" type="email" placeholder=" " required>
+                <label for="email">Email</label>
+            </div>
+            <div class="form-row">
+                <input id="password" name="password" type="password" placeholder=" " required>
+                <label for="password">Password</label>
+            </div>
+
+            <div class="form-row">
+                <button type="submit" class="primary-btn">Register</button>
+                <button type="button" id="clear-form" class="secondary-btn">Clear</button>
+            </div>
+        </form>
+    </div>
+
+        <!-- Login form (smaller) -->
+        <div id="login-form" class="register-form hidden small" aria-hidden="true">
+            <form id="loginForm" class="form-card">
+                <button type="button" class="close-btn" id="close-login">✕</button>
+                <h2>LOGIN</h2>
+                <div class="form-row">
+                    <input id="login-email" name="email" type="text" placeholder=" " required autocomplete="username">
+                    <label for="login-email">Email or username</label>
+                </div>
+                <div class="form-row">
+                    <input id="login-password" name="password" type="password" placeholder=" " required>
+                    <label for="login-password">Password</label>
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="primary-btn">Login</button>
+                    <button type="button" id="clear-login" class="secondary-btn">Clear</button>
+                </div>
+            </form>
+        </div>
+
+    <!-- Email Verification Modal -->
+    <div id="verify-email-form" class="register-form hidden small" aria-hidden="true">
+        <div class="form-card">
+            <button type="button" class="close-btn" id="close-verify">✕</button>
+            <h2>Verify Email</h2>
+            <div style="padding: 20px 0;">
+                <p style="color: white; margin-bottom: 20px;">Verification sent to <strong id="verify-email-address"></strong></p>
+                <button type="button" class="primary-btn" id="simulate-verify-btn" style="width: 100%; margin-bottom: 10px;">Simulate Email Verification</button>
+                <button type="button" class="secondary-btn" id="go-to-login-btn" style="width: 100%;">Go to Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Confirmation Modal -->
+    <div id="delete-account-modal" class="register-form hidden small" aria-hidden="true">
+        <div class="form-card">
+            <button type="button" class="close-btn" id="close-delete-modal">✕</button>
+            <h2>Delete Account</h2>
+            <div style="padding: 20px 0;">
+                <p style="color: white; margin-bottom: 20px;">Are you sure you want to delete <strong id="delete-account-email"></strong>?</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button type="button" class="secondary-btn" id="cancel-delete-btn" style="width: auto; margin: 0;">Cancel</button>
+                    <button type="button" class="primary-btn" id="confirm-delete-btn" style="width: auto; margin: 0; background-color: #d32f2f;">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+    // Small helper: direct handlers for login/register so modals open even if main script fails
+    document.addEventListener('DOMContentLoaded', function(){
+        var loginLink = document.getElementById('login-link');
+        var registerLink = document.getElementById('register-link');
+        var backdrop = document.getElementById('modal-backdrop');
+        var loginForm = document.getElementById('login-form');
+        var registerForm = document.getElementById('register-form');
+
+        function openLogin(){
+            if(registerForm){ registerForm.classList.add('hidden'); registerForm.style.display = 'none'; }
+            if(backdrop){ backdrop.classList.remove('hidden'); backdrop.style.display = 'block'; }
+            if(loginForm){ loginForm.classList.remove('hidden'); loginForm.style.display = 'block'; loginForm.setAttribute('aria-hidden','false'); }
+        }
+        function openRegister(){
+            if(loginForm){ loginForm.classList.add('hidden'); loginForm.style.display = 'none'; }
+            if(backdrop){ backdrop.classList.remove('hidden'); backdrop.style.display = 'block'; }
+            if(registerForm){ registerForm.classList.remove('hidden'); registerForm.style.display = 'block'; registerForm.setAttribute('aria-hidden','false'); }
+        }
+
+        if(loginLink){ loginLink.addEventListener('click', function(e){ e.preventDefault(); openLogin(); }); }
+        if(registerLink){ registerLink.addEventListener('click', function(e){ e.preventDefault(); openRegister(); }); }
+
+        var closeLogin = document.getElementById('close-login'); if(closeLogin){ closeLogin.addEventListener('click', function(){ if(backdrop) { backdrop.classList.add('hidden'); backdrop.style.display='none'; } if(loginForm){ loginForm.classList.add('hidden'); loginForm.style.display='none'; loginForm.setAttribute('aria-hidden','true'); }}); }
+        var closeReg = document.getElementById('close-register'); if(closeReg){ closeReg.addEventListener('click', function(){ if(backdrop) { backdrop.classList.add('hidden'); backdrop.style.display='none'; } if(registerForm){ registerForm.classList.add('hidden'); registerForm.style.display='none'; registerForm.setAttribute('aria-hidden','true'); }}); }
+    });
+    </script>
+
+</body>
+</html>
